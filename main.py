@@ -1,3 +1,5 @@
+import os
+
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
@@ -7,7 +9,7 @@ from models.query_request import QueryRequest
 
 app = FastAPI()
 load_dotenv()
-extractor = Extractor()
+extractor = Extractor(os.getenv("EMBED_MODEL", "gemini"))
 
 @app.post("/document/uri")
 async def process_document_from_uri(document_uri: DocumentURIRequest):
