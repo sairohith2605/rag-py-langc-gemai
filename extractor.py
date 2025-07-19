@@ -5,6 +5,8 @@ from langchain_docling import DoclingLoader
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
 from langchain_milvus import Milvus
 
+from custom_models.qwen_embeddings import QwenEmbeddings
+
 
 class Extractor:
     VECTOR_DB_COLLECTION_NAME = "doc_embeddings"
@@ -23,11 +25,14 @@ class Extractor:
         """
     )
 
-    def __init__(self):
+    def __init__(self, embed_model="gemini"):
         self.llm_model = self.model = ChatGoogleGenerativeAI(
             model="gemini-2.0-flash"
         )
-        self.embed_model = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
+        if embed_model == "qwen":
+            self.embed_model = QwenEmbeddings()
+        else:
+            self.embed_model = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
 
         self.lc_milvus_v_store = Milvus(
             embedding_function=self.embed_model,
