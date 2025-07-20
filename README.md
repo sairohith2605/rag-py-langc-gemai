@@ -14,3 +14,10 @@ It uses the enlisted models:
 
 > Note - 
 > The model can be improved both in terms of the vector database optimization, and a better integration of LangChain's capabilities. That's part of the progress as I learn more.
+
+#### Environment Variables
+
+- `GOOGLE_API_KEY` - The API key for Gemini AI models
+- `MILVUS_CONNECTION_URI` - The URL to the Milvus instance
+- `QWEN_EMBEDDINGS_URI` - The URL to the Qwen Embedding model
+- `EMBED_MODEL` - The model to be used for embedding (currently supported values are `gemini` (default) and `qwen`)
