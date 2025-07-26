@@ -14,7 +14,7 @@ class QwenEmbeddings(Embeddings):
 
     def __send_requests(self, text: list[str]):
         print('Processing embedding requests with Qwen')
-        response = requests.post(self.qwen_uri, json={"inputs": text})
+        response = requests.post(self.qwen_uri, json={"inputs": text, "dimensions": 768})
         response.raise_for_status()
         if isinstance(response.json(), list):
             print('Embeddings processed successfully. Size of embeds: ', len(response.json()))
