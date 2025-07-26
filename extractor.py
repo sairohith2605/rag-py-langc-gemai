@@ -26,7 +26,7 @@ class Extractor:
     )
 
     def __init__(self, embed_model="gemini"):
-        self.llm_model = self.model = ChatGoogleGenerativeAI(
+        self.llm_model = ChatGoogleGenerativeAI(
             model="gemini-2.0-flash"
         )
         if embed_model == "qwen":
@@ -39,7 +39,12 @@ class Extractor:
             collection_name=self.VECTOR_DB_COLLECTION_NAME,
             primary_field="id",
             vector_field="data_vector",
-            connection_args={"URI": self.MILVUS_CONNECTION_URI},
+            connection_args={
+                "uri": self.MILVUS_CONNECTION_URI,
+                "user": os.getenv("MILVUS_USERNAME", ""),
+                "password": os.getenv("MILVUS_PASSWORD", ""),
+                "token": os.getenv("MILVUS_TOKEN", "")
+            },
             index_params={"index_type": "IVF_FLAT", "metric_type": "COSINE"},
             enable_dynamic_field=True,
         )
