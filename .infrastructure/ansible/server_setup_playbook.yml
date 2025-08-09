@@ -1,0 +1,41 @@
+- name: Run Docker Prerequisites
+  hosts: mlservers
+  remote_user: root
+
+  tasks:
+  - name: Install certificates
+    ansible.builtin.apt:
+     name: 
+     - apt-transport-https
+     - ca-certificates
+     - curl
+     - software-properties-common
+     update_cache: true
+    become: true
+  
+  - name: Register GPG key for Docker repository
+    ansible.builtin.apt_key:
+     url: https://download.docker.com/linux/ubuntu/gpg
+    become: true
+
+  - name: Add Docker Repository
+    ansible.builtin.apt_repository:
+     repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+     update_cache: true
+    become: true
+
+- name: Install Docker
+  hosts: mlservers
+  remote_user: root
+
+  tasks:
+  - name: Install Docker CE
+    ansible.builtin.apt:
+     name: docker-ce
+    become: true
+
+  - name: Confirm Docker is running (Systemd)
+    ansible.builtin.systemd_service:
+     name: docker
+     state: started
+    become: true

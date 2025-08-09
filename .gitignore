@@ -2,3 +2,6 @@
 volumes
 __pycache__
 .idea
+
+# Virtual environment
+env/

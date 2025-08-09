@@ -5,6 +5,8 @@ from langchain_docling import DoclingLoader
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
 from langchain_milvus import Milvus
 
+from custom_models.qwen_embeddings import QwenEmbeddings
+
 
 class Extractor:
     VECTOR_DB_COLLECTION_NAME = "doc_embeddings"
@@ -23,18 +25,26 @@ class Extractor:
         """
     )
 
-    def __init__(self):
-        self.llm_model = self.model = ChatGoogleGenerativeAI(
+    def __init__(self, embed_model="gemini"):
+        self.llm_model = ChatGoogleGenerativeAI(
             model="gemini-2.0-flash"
         )
-        self.embed_model = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
+        if embed_model == "qwen":
+            self.embed_model = QwenEmbeddings()
+        else:
+            self.embed_model = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
 
         self.lc_milvus_v_store = Milvus(
             embedding_function=self.embed_model,
             collection_name=self.VECTOR_DB_COLLECTION_NAME,
             primary_field="id",
             vector_field="data_vector",
-            connection_args={"URI": self.MILVUS_CONNECTION_URI},
+            connection_args={
+                "uri": self.MILVUS_CONNECTION_URI,
+                "user": os.getenv("MILVUS_USERNAME", ""),
+                "password": os.getenv("MILVUS_PASSWORD", ""),
+                "token": os.getenv("MILVUS_TOKEN", "")
+            },
             index_params={"index_type": "IVF_FLAT", "metric_type": "COSINE"},
             enable_dynamic_field=True,
         )

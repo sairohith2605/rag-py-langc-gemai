@@ -1,3 +1,6 @@
+import os
+
+import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
@@ -7,7 +10,7 @@ from models.query_request import QueryRequest
 
 app = FastAPI()
 load_dotenv()
-extractor = Extractor()
+extractor = Extractor(os.getenv("EMBED_MODEL", "gemini"))
 
 @app.post("/document/uri")
 async def process_document_from_uri(document_uri: DocumentURIRequest):
@@ -19,3 +22,7 @@ async def process_document_from_uri(document_uri: DocumentURIRequest):
 async def process_query(query: QueryRequest):
     query_result = await extractor.generate_llm_response(query.query)
     return {"result": query_result}
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8050)
